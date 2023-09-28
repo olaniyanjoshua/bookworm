@@ -1,0 +1,79 @@
+{% extends "user/home_layout.html" %}
+{% block content %}
+  <h2>Confirmation Page</h2>
+  <p>Kindly confirm the following details:</p>
+
+  <div class="mb-3">
+   <label for="">Donor's Name</label>
+   {{ donation_deets.don_fullname }}
+  </div>
+
+<div class="mb-3">
+   <label for="">Donor's Email</label>
+   {{ donation_deets.don_email }}
+</div>
+
+<div class="mb-3">
+   <label for="">Donor's Amount</label>
+   NGN{{ donation_deets.don_amt/100 }}
+</div>
+
+<div class="mb-3">
+   <label for="">TRANSACTION REF</label>
+   {{ donation_deets.don_refno }}
+</div>
+<form action="">
+   <div class="mb-3">
+      <a class="btn btn-warning no round" href="/dashboard">Cancel Payment</a>
+      
+      </div>
+      </form>
+      <hr>
+      <h5>javascript Pop Up Method</h5>
+     
+      <form action="" id="paymentForm">
+      <button class="btn btn-dark noround" onclick="payWithPaystack()">Confirm Payment(Pop Up)</button>
+         <hr>
+
+      <h5>Redirect Method</h5>
+      <a href="/initialize/paystack" class="btn btn-success noround">Make payment now</a>
+  
+</form>
+
+{% endblock %}
+{% block customjs %}
+<script src="https://js.paystack.co/v1/inline.js"></script>
+<script>
+   const paymentForm = document.getElementById('paymentForm');
+      paymentForm.addEventListener("submit", payWithPaystack, false);
+
+      function payWithPaystack(e) {
+         e.preventDefault();
+
+         let handler = PaystackPop.setup({
+            key: 'pk_test_c85d3b1ef49e844cd9eab6b25321d34df512eca6', // Replace with your public key
+            email: "{{ donation_deets.don_email }}",
+            amount: "{{ donation_deets.don_amt }}",
+            ref: "{{ donation_deets.don_refno }}", // generates a pseudo-unique reference. Please replace with a reference you generated. Or remove the line entirely so our API will generate one for you
+            // label: "Optional string that replaces customer email"
+            onClose: function () {
+               alert('Window closed.');
+            },
+            callback: function (response) {
+               console.log(reference);
+               let message = 'Payment complete! Reference: ' + response.reference;
+               alert(message);
+            }
+         });
+
+         handler.openIframe();
+      }
+
+</script>
+{% endblock %}
+
+{% block partner %}
+{% endblock %}
+
+{% block featured %}
+{% endblock %}
